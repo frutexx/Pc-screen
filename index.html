@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zjištění komponent počítače</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:760px;margin:32px auto;padding:0 18px;line-height:1.55;color:#172033;background:#f5f7fb}
+    main{background:white;padding:26px;border-radius:16px;box-shadow:0 4px 22px #17203312}
+    h1{font-size:1.7rem;margin-top:0} pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101827;color:#e8f0ff;padding:16px;border-radius:10px;font-size:14px}
+    button{background:#1769e0;color:white;border:0;border-radius:9px;padding:13px 18px;font-size:16px;font-weight:bold;cursor:pointer}
+    li{margin:8px 0}.note{color:#536176;font-size:.94rem}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Zjištění komponent počítače</h1>
+  <p>Postupuj podle návodu. Příkaz pouze vypíše informace o počítači – nic nemění ani nemaže.</p>
+  <ol>
+    <li>Stiskni současně <b>WIN + R</b>.</li>
+    <li>Napiš <code>powershell</code> a stiskni ENTER.</li>
+    <li>Klikni na tlačítko <b>Kopírovat příkaz</b> níže.</li>
+    <li>Vlož příkaz do okna PowerShell pomocí <b>CTRL + V</b> a stiskni ENTER.</li>
+    <li>Až se zobrazí výsledky, stiskni <b>WIN + SHIFT + S</b>, označ výsledky a pošli screenshot.</li>
+  </ol>
+  <h2>Příkaz do PowerShellu</h2>
+  <pre id="cmd">Get-CimInstance Win32_Processor | Select Name; Get-CimInstance Win32_BaseBoard | Select Manufacturer,Product; Get-CimInstance Win32_PhysicalMemory | Select @{N="RAM GB";E={[math]::Round($_.Capacity/1GB)}},Speed; Get-CimInstance Win32_VideoController | Select Name; Get-PhysicalDisk | Select FriendlyName,@{N="Disk GB";E={[math]::Round($_.Size/1GB)}}</pre>
+  <button id="copy">Kopírovat příkaz</button>
+  <p class="note" id="status" aria-live="polite">Příkaz se nespustí automaticky. Syn ho musí sám vložit a potvrdit v PowerShellu.</p>
+</main>
+<script>
+  document.getElementById('copy').addEventListener('click', async () => {
+    const value = document.getElementById('cmd').textContent;
+    try {
+      await navigator.clipboard.writeText(value);
+      document.getElementById('status').textContent = 'Příkaz zkopírován. Vlož ho do PowerShellu pomocí CTRL + V.';
+    } catch (e) {
+      document.getElementById('status').textContent = 'Automatické kopírování není dostupné. Označ příkaz a zkopíruj ho ručně pomocí CTRL + C.';
+    }
+  });
+</script>
+</body>
+</html>
